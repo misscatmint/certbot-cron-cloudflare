@@ -33,6 +33,12 @@ services:
       - ./certbot:/etc/letsencrypt
 ```
 
+`certbot/cloudflare.ini`:
+
+```ini
+dns_cloudflare_api_token = ...
+```
+
 `soju/config`:
 
 ```
