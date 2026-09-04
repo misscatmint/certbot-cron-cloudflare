@@ -50,3 +50,9 @@ listen ircs://
 tls /tls/live/example.com/fullchain.pem /tls/live/example.com/privkey.pem
 hostname example.com
 ```
+
+Note that due to a bug in Docker, you may need to set the restart policy to
+`always` to have soju start up on system reboot. This happens when using
+`docker kill` in `CERTBOT_DEPLOY`, which makes Docker erroneously think the
+container was manually stopped, even for signals like `SIGHUP`. For more
+information, see [here](https://github.com/moby/moby/pull/53415).
