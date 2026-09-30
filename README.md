@@ -1,7 +1,7 @@
 # certbot-cron-cloudflare
 
-Simple Dockerfile for running certbot-dns-cloudflare with crond and executing
-Docker commands based on renewals.
+Simple Dockerfile for running certbot-dns-cloudflare with supercronic and
+executing Docker commands based on renewals.
 
 ## Example `compose.yaml` with soju
 
@@ -10,7 +10,7 @@ services:
   soju:
     container_name: soju
     image: codeberg.org/emersion/soju
-    restart: unless-stopped
+    restart: always
     ports:
       - "6697:6697"
     volumes:
@@ -23,6 +23,8 @@ services:
     build:
       context: ~/src/certbot-cron-cloudflare
       dockerfile: Dockerfile
+    depends_on:
+      - soju
     environment:
       TZ: America/Chicago
       CERTBOT_EMAIL: webmaster@example.com
@@ -32,6 +34,11 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./certbot:/etc/letsencrypt
 ```
+
+Mounting `/var/run/docker.sock` gives the certbot container full control of
+the Docker daemon, which is root-equivalent on the host. `CERTBOT_DEPLOY` only
+needs to signal one container, so consider a socket proxy that allows just the
+kill endpoint.
 
 `certbot/cloudflare.ini`:
 
@@ -52,7 +59,8 @@ hostname example.com
 ```
 
 Note that due to a bug in Docker, you may need to set the restart policy to
-`always` to have soju start up on system reboot. This happens when using
-`docker kill` in `CERTBOT_DEPLOY`, which makes Docker erroneously think the
-container was manually stopped, even for signals like `SIGHUP`. For more
-information, see [here](https://github.com/moby/moby/pull/53415).
+`always` instead of `unless-stopped` to have soju start up on system reboot.
+This happens when using `docker kill` in `CERTBOT_DEPLOY`, which makes Docker
+erroneously think the container was manually stopped, even for signals like
+`SIGHUP`. For more information, see
+[here](https://github.com/moby/moby/pull/53415).
