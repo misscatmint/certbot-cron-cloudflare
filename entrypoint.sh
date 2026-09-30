@@ -6,4 +6,5 @@ certbot certonly --dns-cloudflare \
 --deploy-hook /deploy.sh \
 --email "$CERTBOT_EMAIL" --agree-tos --no-eff-email --keep-until-expiring \
 $CERTBOT_ARGS
+/deploy.sh
 exec "$@"
