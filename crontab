@@ -1,1 +1,1 @@
-17 3,15 * * * certbot renew
+17 3,15 * * * certbot renew --deploy-hook /deploy.sh

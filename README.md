@@ -92,8 +92,13 @@ hostname example.com
 ```sh
 chmod 600 data/certbot/cloudflare.ini
 sudo chown -R 1000:1000 data    # skip on rootless Docker, see Permissions
+docker compose run --rm --no-deps certbot /issue.sh
 docker compose up -d
 ```
+
+Soju exits if its certificate files are missing, so the `run` gets the first
+certificate before soju starts. `--no-deps` keeps it from starting soju
+alongside.
 
 Soju only gets the `live` and `archive` directories, so it can't read the
 Cloudflare API token or the ACME account key. The soju image puts its admin
