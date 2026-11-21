@@ -8,6 +8,10 @@ RUN apk add --no-cache curl docker-cli && \
     chmod +x /usr/local/bin/supercronic
 
 COPY --chmod=755 crontab deploy.sh entrypoint.sh /
+# No --chmod: COPY would give the directories it creates the same mode.
+COPY cli.ini /etc/certbot/letsencrypt/cli.ini
+ENV XDG_CONFIG_HOME=/etc/certbot
+USER 1000:1000
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/local/bin/supercronic", "/crontab"]
